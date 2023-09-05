@@ -28,12 +28,15 @@ extension HttpClient {
         print(request)
 
         do {
-            let (data, response)  =  try await URLSession.shared.data(for: request)
+            
+            let tempSession = URLSession(configuration: .ephemeral)
+
+            let (data, response)  =  try await tempSession.data(for: request)
             guard let response = response as? HTTPURLResponse else {
                 return .failure(.noResponse)
             }
 
-            print(String.init(data: data, encoding: .utf8) ?? "NO DATA")
+//            print(String.init(data: data, encoding: .utf8) ?? "NO DATA")
             switch response.statusCode {
             case 200...299:
                 guard let decodedResponse = try? JSONDecoder().decode(responseModel, from: data) else {

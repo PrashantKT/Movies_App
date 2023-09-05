@@ -9,7 +9,7 @@ import Foundation
 
 enum MoviesEndpoint {
     case topRated
-    case trending
+    case trending(para:[String:Any])
     case genre
     case moviesReview(id: Int)
     case discoverMovies(para:[String:Any])
@@ -58,6 +58,8 @@ extension MoviesEndpoint : EndPoint {
     var queryItem: [String : Any]? {
         switch self {
         case .discoverMovies(let para):
+            return para
+        case .trending(let para):
             return para
         default:
             return nil

@@ -9,7 +9,7 @@ import Foundation
 
 protocol MovieServiable {
     func fetchTopRated() async -> Result<MovieResponse,RequestError>
-    func fetchTrending() async -> Result<MovieResponse,RequestError>
+    func fetchTrending(queryPara:[String:Any]) async -> Result<MovieResponse,RequestError>
     func fetchGenre() async -> Result<GenreResponse,RequestError>
     func discoverMovies(queryPara:[String:Any]) async -> Result<MovieResponse,RequestError>
 
@@ -20,8 +20,8 @@ actor MovieService : MovieServiable,HttpClient {
         await sendRequest(endPoint: MoviesEndpoint.topRated, responseModel: MovieResponse.self)
     }
     
-    func fetchTrending() async -> Result<MovieResponse,RequestError> {
-        await sendRequest(endPoint: MoviesEndpoint.trending, responseModel: MovieResponse.self)
+    func fetchTrending(queryPara:[String:Any]) async -> Result<MovieResponse,RequestError> {
+        await sendRequest(endPoint: MoviesEndpoint.trending(para: queryPara), responseModel: MovieResponse.self)
     }
     
     func fetchGenre() async -> Result<GenreResponse,RequestError> {

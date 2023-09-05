@@ -63,9 +63,23 @@ struct HomeView: View {
     @ViewBuilder
     var trendingItemsView : some View {
         if let topTrending = vm.topTrendingMovies?.results {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(),spacing: 20), count: 3)) {
-                ForEach(topTrending) {movie in
-                    MovieCardView(movie: movie, cardType: .grid)
+            VStack {
+                ScrollViewReader { proxy in
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(),spacing: 20), count: 3)) {
+                        ForEach(topTrending) {movie in
+                            MovieCardView(movie: movie, cardType: .grid)
+                                .onAppear {
+                                    vm.trendingMoviesScroll(at: movie)
+                                }
+                                .tag(movie.id)
+                        }
+                    }
+                   
+                }
+                VStack {
+                    ProgressView()
+                        .padding(.top,20)
+                        .opacity(vm.topTrendingMoviePagination.isRequestingNewpage ? 1 : 0)
                 }
             }
         }

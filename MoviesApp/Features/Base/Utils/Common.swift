@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct ErrorWrapper: Identifiable {
     let id = UUID()
@@ -16,3 +17,9 @@ struct ErrorWrapper: Identifiable {
 class AppState {
     var errorWrapper: ErrorWrapper?
 }
+
+struct ErrorWrapperKey:EnvironmentKey {
+    static var defaultValue: AppState = AppState()
+    
+}
+

@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Welcome
 struct MovieResponse: Codable {
     let page: Int
-    let results: [Movie]?
+    var results: [Movie]?
     let totalPages, totalResults: Int
 
     enum CodingKeys: String, CodingKey {
@@ -22,7 +22,7 @@ struct MovieResponse: Codable {
 }
 
 // MARK: - Result
-struct Movie: Codable,Identifiable {
+struct Movie: Codable,Identifiable,Equatable {
     let adult: Bool?
     let backdropPath: String?
     let genreIDS: [Int]?

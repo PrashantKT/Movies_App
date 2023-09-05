@@ -12,7 +12,7 @@ struct MovieImageLoader: View {
     
     var body: some View {
         
-        AsyncImage(url: URL(string: movie.imageURLString)) { image in
+        AsyncImage(url: URL(string: movie.imageURLString + "d")) { image in
             image
                 .resizable()
                 .scaledToFill()
