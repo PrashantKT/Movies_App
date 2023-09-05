@@ -24,7 +24,7 @@ class HomeViewModel:ObservableObject {
     @Published var errormsg = ""
     @MainActor @Published var isLoading = false
     
-    @Published var topTrendingMoviePagination = MoviePagination()
+    private (set) var topTrendingMoviePagination = MoviePagination()
    
     
     
@@ -50,7 +50,7 @@ class HomeViewModel:ObservableObject {
             topTrendingMoviePagination.currentPage += 1
             self.topTrendingMoviePagination.isRequestingNewpage = true
 
-            let movies =  await fetchTrendingMovies()
+            let movies =  await fetchMoviewBasedOnSelectedGenres()
             DispatchQueue.main.async {
                 self.topTrendingMovies?.results?.append(contentsOf: movies?.results ?? [])
                 print("#4 Refresh Data")
@@ -72,6 +72,22 @@ class HomeViewModel:ObservableObject {
             self.topTrendingMoviePagination.currentPage = res.page
             self.topTrendingMoviePagination.isMoreRecordAvailable = res.page < res.totalPages
             print("#3 Return Result")
+
+            return res
+        case .failure(let error):
+            errormsg =  error.customMessage
+            
+        }
+        return nil
+    }
+    
+    func refreshMoviesOnGenreSelection() async -> MovieResponse? {
+        let queryPara:[String:Any] = ["with_genres":selectedGenre.id,"page":topTrendingMoviePagination.currentPage]
+        let movies = await movieService.discoverMovies(queryPara: queryPara)
+        switch movies {
+        case .success(let res):
+            self.topTrendingMoviePagination.currentPage = res.page
+            self.topTrendingMoviePagination.isMoreRecordAvailable = res.page < res.totalPages
 
             return res
         case .failure(let error):
@@ -107,18 +123,7 @@ class HomeViewModel:ObservableObject {
 
     }
     
-    func refreshMoviesOnGenreSelection() async -> MovieResponse? {
-        let queryPara:[String:Any] = ["with_genres":selectedGenre.id]
-        let movies = await movieService.discoverMovies(queryPara: queryPara)
-        switch movies {
-        case .success(let res):
-            return res
-        case .failure(let error):
-            errormsg =  error.customMessage
-            
-        }
-        return nil
-    }
+
     
     func fetchMoviesAndGenres() {
         Task {
@@ -133,6 +138,22 @@ class HomeViewModel:ObservableObject {
             
 
             isLoading = false
+        }
+    }
+    
+    private func fetchMoviewBasedOnSelectedGenres() async -> MovieResponse? {
+        if selectedGenre == .topTrending {
+            return await fetchTrendingMovies()
+        } else {
+            return await refreshMoviesOnGenreSelection()
+
+        }
+    }
+    
+    func genreChanged() {
+        Task {
+            self.topTrendingMoviePagination.reset()
+            self.topTrendingMovies = await fetchMoviewBasedOnSelectedGenres()
         }
     }
     

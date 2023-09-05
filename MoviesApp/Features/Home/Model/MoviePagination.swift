@@ -13,4 +13,13 @@ struct MoviePagination {
     var isMoreRecordAvailable = true
     var task:Task<(),Never>?
     var lastRecord:Movie?
+    
+    mutating func reset() {
+        isRequestingNewpage = false
+        currentPage = 1
+        isMoreRecordAvailable = true
+        task?.cancel()
+        task = nil
+        lastRecord = nil
+    }
 }
