@@ -11,24 +11,37 @@ struct HomeView: View {
     @StateObject  var vm = HomeViewModel(service: MovieService())
     @Namespace var animation
     var body: some View {
-        ScrollView(showsIndicators: true) {
-            
-            VStack(alignment: .leading,spacing: 20) {
-                Text("What do you want to watch?")
-                    .font(.poppins(.Bold, size: 20))
-                Searchbar(searchText: $vm.searchText)
-                topHorizontalScrollView
-                trendingItemsView
+        NavigationStack {
+            ScrollView(showsIndicators: true) {
+                
+                VStack(alignment: .leading,spacing: 20) {
+                    Text("What do you want to watch?")
+                        .font(.poppins(.Bold, size: 20))
+                    Searchbar(searchText: $vm.searchText)
+                    topHorizontalScrollView
+                    trendingItemsView
+                }
             }
-        }
-        .preferredColorScheme(.dark)
-        .padding([.top,.leading,.trailing])
-        .background(Color.AppBackgroundColor.ignoresSafeArea())
-        .onAppear {
-            vm.fetchMoviesAndGenres()
-        }
-        .onChange(of: vm.selectedGenre) { newValue in
-            vm.genreChanged()
+    
+            .preferredColorScheme(.dark)
+            .padding([.top,.leading,.trailing])
+            .background(Color.AppBackgroundColor.ignoresSafeArea())
+            .onAppear {
+                vm.fetchMoviesAndGenres()
+            }
+            .onChange(of: vm.selectedGenre) { newValue in
+                vm.genreChanged()
+            }
+            .overlay{
+                if vm.isLoading {
+                    ZStack {
+                        Color.black.opacity(0.7)
+                            .ignoresSafeArea()
+                        ProgressView()
+                            .frame(width: 55,height: 55)
+                    }
+                }
+            }
         }
     }
     
@@ -39,6 +52,7 @@ struct HomeView: View {
                 HStack(spacing:30) {
                     ForEach(movies) {movie in
                         MovieCardView(movie: movie, cardType: .poster)
+                            
                     }
                 }
             }
@@ -66,7 +80,7 @@ struct HomeView: View {
                     VStack {
                         ProgressView()
                             .padding(.top,20)
-                            .opacity(vm.topTrendingMoviePagination.isRequestingNewpage ? 1 : 0)
+                            .opacity(vm.topTrendingMoviePagination.isMoreRecordAvailable ? 1 : 0)
                     }
                 }
             }

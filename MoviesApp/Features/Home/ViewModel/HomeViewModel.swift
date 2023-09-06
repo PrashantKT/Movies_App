@@ -53,6 +53,7 @@ class HomeViewModel:ObservableObject {
             let movies =  await fetchMoviewBasedOnSelectedGenres()
             DispatchQueue.main.async {
                 self.topTrendingMovies?.results?.append(contentsOf: movies?.results ?? [])
+                self.topTrendingMovies?.results = self.topTrendingMovies?.results?.uniqued()
                 print("#4 Refresh Data")
                 self.topTrendingMoviePagination.isRequestingNewpage = false
 

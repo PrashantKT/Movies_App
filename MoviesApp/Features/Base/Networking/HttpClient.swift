@@ -29,9 +29,7 @@ extension HttpClient {
 
         do {
             
-            let tempSession = URLSession(configuration: .ephemeral)
-
-            let (data, response)  =  try await tempSession.data(for: request)
+            let (data, response)  =  try await URLSession.shared.data(for: request)
             guard let response = response as? HTTPURLResponse else {
                 return .failure(.noResponse)
             }

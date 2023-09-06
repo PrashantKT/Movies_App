@@ -14,6 +14,8 @@ struct Searchbar: View {
     @FocusState private var searchFocus:Bool
     var body: some View {
         TextField("Search", text: $searchText)
+            .font(.poppins(.SemiBold, size: 16))
+            .autocorrectionDisabled()
             .overlay(alignment:.trailing) {
                 if !searchText.isEmpty {
                     Image.cancelIcon
@@ -36,11 +38,6 @@ struct Searchbar: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color.AppGrayColor1)
             )
-        
-          
-       
-        
-            
     }
 }
 

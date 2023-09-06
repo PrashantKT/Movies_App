@@ -9,10 +9,10 @@ import SwiftUI
 
 struct MovieImageLoader: View {
     let movie:Movie
-    
+    let cardType:MovieCardType
     var body: some View {
         
-        AsyncImage(url: URL(string: movie.imageURLString)) { image in
+        AsyncImage(url: URL(string: cardType.baseURL + movie.posterPath)) { image in
             image
                 .resizable()
                 .scaledToFill()
@@ -31,6 +31,6 @@ struct MovieImageLoader: View {
 
 struct MovieImageLoader_Previews: PreviewProvider {
     static var previews: some View {
-        MovieImageLoader(movie: Movie.previewMovie)
+        MovieImageLoader(movie: Movie.previewMovie,cardType: .grid)
     }
 }

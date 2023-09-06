@@ -51,11 +51,16 @@ struct Movie: Codable,Identifiable,Equatable {
     }
 }
 
+extension Movie:Hashable {}
+
 extension Movie {
     var imageURLString:String {
         return Constants.imageBaseURL500 + posterPath
     }
     
+    var imageURLGridString:String {
+        return Constants.imageBaseURL200 + posterPath
+    }
 }
 
 extension Movie {

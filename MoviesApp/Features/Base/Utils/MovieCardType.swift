@@ -31,3 +31,15 @@ extension MovieCardType {
         }
     }
 }
+
+extension MovieCardType {
+    var baseURL:String {
+        switch self {
+        case .poster:
+            return Constants.imageBaseURL500
+        case .grid:
+            return Constants.imageBaseURL200
+            
+        }
+    }
+}
