@@ -22,7 +22,7 @@ struct MovieReviewResponse: Codable {
 // MARK: - MovieReview
 struct MovieReview: Codable {
     let author: String
-    let authorDetails: AuthorDetails
+    let authorDetails: AuthorDetails?
     let content, createdAt, id, updatedAt: String
     let url: String
 
@@ -39,7 +39,8 @@ struct MovieReview: Codable {
 
 // MARK: - AuthorDetails
 struct AuthorDetails: Codable {
-    let name, username, avatarPath: String
+    let name, username:String
+    let avatarPath: String?
     let rating: Int
 
     enum CodingKeys: String, CodingKey {

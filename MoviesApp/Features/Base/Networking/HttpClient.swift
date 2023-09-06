@@ -37,10 +37,16 @@ extension HttpClient {
 //            print(String.init(data: data, encoding: .utf8) ?? "NO DATA")
             switch response.statusCode {
             case 200...299:
-                guard let decodedResponse = try? JSONDecoder().decode(responseModel, from: data) else {
+                do {
+                    let decodedResponse = try JSONDecoder().decode(responseModel, from: data)
+                    return .success(decodedResponse)
+
+                } catch {
+                    print(error)
                     return .failure(.decode)
+
                 }
-                return .success(decodedResponse)
+             
             case 401:
                 return .failure(.unauthorized)
             default:

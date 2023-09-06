@@ -71,7 +71,7 @@ struct DetailsView: View {
             }
         }
         .onAppear {
-//            vm.fetchMoveDetails(id: movie.id)
+            vm.fetchMoveDetails(id: movie.id)
         }
         .overlay{
             if vm.isLoading {
