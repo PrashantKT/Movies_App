@@ -24,6 +24,9 @@ class HomeViewModel:ObservableObject {
     @Published var errormsg = ""
     @MainActor @Published var isLoading = false
     
+    @Published var selectedMovie:Movie?
+    @Published var isMovieSelected = false
+
     private (set) var topTrendingMoviePagination = MoviePagination()
    
     

@@ -54,12 +54,33 @@ struct Movie: Codable,Identifiable,Equatable {
 extension Movie:Hashable {}
 
 extension Movie {
-    var imageURLString:String {
+    var imagePosterSize:String {
         return Constants.imageBaseURL500 + posterPath
     }
     
-    var imageURLGridString:String {
+    var imageSmallGridSize:String {
         return Constants.imageBaseURL200 + posterPath
+    }
+    
+    func fetchBaseURL(cardType:MovieCardType,imageType:MovieImageType) -> String {
+        switch imageType {
+        case .backdrop:
+            return Constants.imageBaseURL + (backdropPath ?? posterPath)
+        case .poster:
+            switch cardType {
+            case .poster:
+                return imagePosterSize
+            case .grid:
+                return imageSmallGridSize
+            }
+        }
+    }
+}
+
+extension Movie {
+    enum MovieImageType {
+        case poster
+        case backdrop
     }
 }
 
@@ -69,23 +90,22 @@ extension Movie {
     """
     {
           "adult": false,
-          "backdrop_path": "/dIWwZW7dJJtqC6CgWzYkNVKIUm8.jpg",
+          "backdrop_path": "/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg",
           "genre_ids": [
-            10749,
-            16,
-            18
+            53,
+            80
           ],
-          "id": 372058,
-          "original_language": "ja",
-          "original_title": "君の名は。",
-          "overview": "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places. Mitsuha wakes up in Taki’s body, and he in hers. This bizarre occurrence continues to happen randomly, and the two must adjust their lives around each other.",
-          "popularity": 76.947,
-          "poster_path": "/q719jXXEzOoYaps6babgKnONONX.jpg",
-          "release_date": "2016-08-26",
-          "title": "Your Name.",
+          "id": 680,
+          "original_language": "en",
+          "original_title": "Pulp Fiction",
+          "overview": "A burger-loving hit man, his philosophical partner, a drug-addled gangster's moll and a washed-up boxer converge in this sprawling, comedic crime caper. Their adventures unfurl in three stories that ingeniously trip back and forth in time.",
+          "popularity": 67.834,
+          "poster_path": "/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+          "release_date": "1994-09-10",
+          "title": "Pulp Fiction",
           "video": false,
           "vote_average": 8.5,
-          "vote_count": 10204
+          "vote_count": 25779
         }
     """
     
