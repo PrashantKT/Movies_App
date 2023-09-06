@@ -10,7 +10,6 @@ import SwiftUI
 struct HomeView: View {
     @StateObject  var vm = HomeViewModel(service: MovieService())
     @Namespace var animation
-    @Namespace var animation2
 
     var body: some View {
         NavigationStack {
@@ -48,7 +47,7 @@ struct HomeView: View {
         
                 if let binding = Binding<Movie>($vm.selectedMovie) {
                   
-                    DetailsView(movie: binding,nameSpace: animation2)
+                    DetailsView(movie: binding)
                         
                 }
 
@@ -63,7 +62,6 @@ struct HomeView: View {
                 HStack(spacing:30) {
                     ForEach(movies) {movie in
                         MovieCardView(movie: movie, cardType: .poster)
-                            .matchedGeometryEffect(id: movie.id, in: animation2)
                             .onTapGesture {
 //                                vm.selectedMovie = movie
 //                                vm.isMovieSelected.toggle()
@@ -89,7 +87,6 @@ struct HomeView: View {
                 Section {
                     ForEach(topTrending) {movie in
                         MovieCardView(movie: movie, cardType: .grid)
-                            .matchedGeometryEffect(id: movie.id, in: animation2)
                             .id(movie.id)
                             .onAppear {
                                  vm.trendingMoviesScroll(at: movie)

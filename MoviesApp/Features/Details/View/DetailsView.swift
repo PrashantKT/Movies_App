@@ -10,39 +10,46 @@ import SwiftUI
 struct DetailsView: View {
     
     @Binding var movie:Movie
-    var nameSpace:Namespace.ID
-
+    @StateObject  var vm = MovieDetailViewModel(movieService: MovieService())
+    @Namespace var namespace
     @Environment(\.dismiss) var dismiss
     var body: some View {
         VStack {
-            ZStack {
-                GeometryReader {proxy in
-                    let size = proxy.frame(in: .global)
-                    MovieImageLoader(movie: movie, cardType: .poster,imageType:.backdrop)
-                        .frame(width: size.width,height:size.height)
-                        .clipped()
+            MovieDetailsHeaderView(movie: $movie)
+            
+            VStack {
+                tagView
+                
+                GenreView(selectedGenre: $vm.currentTab, genre: DetailSectionTab.displayAsGenre, nameSpace: namespace)
+                    .padding()
                     
-                }
-                .frame(height:screenHeight * 0.35)
-                HStack {
-                    MovieImageLoader(movie: movie,cardType: .grid)
-                        .frame(width: screenWidth * 0.3,height: screenWidth * 0.4)
-                        .matchedGeometryEffect(id: movie.id, in: nameSpace)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .shadow(color: Color.black.opacity(0.2), radius: 5,x: 5,y: 5)
-                        .shadow(color: Color.white.opacity(0.2), radius: 5,x: -5,y:-5)
+                TabView(selection: $vm.currentTab) {
+                    
+                    aboutMovieSection
+                        .tag(DetailSectionTab.aboutMovie.rawValue)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                    
+                    reviewView
+                        .tag(DetailSectionTab.reviews.rawValue)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                    
+                    castView
+                        .tag(DetailSectionTab.cast.rawValue)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                    
 
-                    Text(movie.title)
-                        .font(.poppins(.SemiBold, size: 25))
+                
                 }
-                .padding()
-                .offset(y:screenWidth * 0.2)
-                .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .bottomLeading)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+
+        
             }
-            ScrollView {
-                Text("PENDING")
-            }
+            
             .padding(.top,screenWidth * 0.2)
+
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.AppBackgroundColor.ignoresSafeArea())
@@ -61,8 +68,92 @@ struct DetailsView: View {
                         .fontWeight(.bold)
                         .tint(Color.white)
                 }
+            }
+        }
+        .onAppear {
+//            vm.fetchMoveDetails(id: movie.id)
+        }
+        .overlay{
+            if vm.isLoading {
+                ZStack {
+                    Color.black.opacity(0.7)
+                        .ignoresSafeArea()
+                    ProgressView()
+                        .frame(width: 55,height: 55)
+                }
+            }
+        }
+        
+    }
+    
+    var tagView: some View {
+        ScrollView(.horizontal,showsIndicators: false) {
+            
+            HStack {
+                Label(vm.movieDetailsResponse?.releaseDate ?? "-", image: "CalendarIcon")
+                Divider()
+                    .frame(height: 20)
+                Label("\(vm.movieDetailsResponse?.runtime ?? 0) Minutes", image: "ClockIcon")
+                Divider()
+                    .frame(height: 20)
+                Label(vm.fetchGenres(), image: "GenreIcon")
+                    .lineLimit(1)
+            }
+        }
+        .padding(.horizontal,20)
+        
+        .font(.poppins(.Regular, size: 12))
+        .foregroundColor(Color.AppGrayColor2)
+    }
+    
+    @ViewBuilder var aboutMovieSection : some View {
+        VStack {
+            Text(vm.movieDetailsResponse?.overview ?? "")
+                .font(.poppins(.Medium, size: 16))
+        }
+    }
+    
+    @ViewBuilder var reviewView : some View {
+        VStack {
+            Text(vm.movieRevies?.results.first?.content ?? "")
+                .font(.poppins(.Medium, size: 16))
+        }
+    }
+    
+    @ViewBuilder var castView : some View {
+        VStack {
+            Text(vm.movieCastAndCrew?.cast.first?.name ?? "")
+                .font(.poppins(.Medium, size: 16))
+        }
+    }
+}
+
+struct MovieDetailsHeaderView : View {
+    @Binding var movie:Movie
+    var body: some View {
+        ZStack(alignment:.bottomLeading) {
+            GeometryReader {proxy in
+                let size = proxy.frame(in: .global)
+                MovieImageLoader(movie: movie, cardType: .poster,imageType:.backdrop)
+                    .clipped()
+                    .frame(width: size.width,height:size.height)
+                
+            }
+            .frame(height:screenHeight * 0.35)
+            HStack(spacing:15) {
+                MovieImageLoader(movie: movie,cardType: .grid)
+                    .frame(width: screenWidth * 0.3,height: screenWidth * 0.4)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .shadow(color: Color.black.opacity(0.2), radius: 5,x: 5,y: 5)
+                    .shadow(color: Color.white.opacity(0.2), radius: 5,x: -5,y:-5)
+                
+                Text(movie.title)
+                    .font(.poppins(.SemiBold, size: 25))
+                    .offset(y:20)
 
             }
+            .padding()
+            .offset(y:screenWidth * 0.2)
         }
     }
 }
@@ -72,7 +163,7 @@ struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
         
         NavigationStack {
-            DetailsView(movie: .constant(Movie.previewMovie), nameSpace: nameSpace)
+            DetailsView(movie: .constant(Movie.previewMovie))
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle(Movie.previewMovie.title)
         }

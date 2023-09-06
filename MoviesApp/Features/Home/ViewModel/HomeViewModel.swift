@@ -19,7 +19,7 @@ class HomeViewModel:ObservableObject {
     @Published var topTrendingMovies:MovieResponse?
 
     @Published var genres = [Genre]()
-    @Published var selectedGenre:Genre = .topTrending
+    @Published var selectedGenre:Int = Genre.topTrending.id
 
     @Published var errormsg = ""
     @MainActor @Published var isLoading = false
@@ -86,7 +86,7 @@ class HomeViewModel:ObservableObject {
     }
     
     func refreshMoviesOnGenreSelection() async -> MovieResponse? {
-        let queryPara:[String:Any] = ["with_genres":selectedGenre.id,"page":topTrendingMoviePagination.currentPage]
+        let queryPara:[String:Any] = ["with_genres":selectedGenre,"page":topTrendingMoviePagination.currentPage]
         let movies = await movieService.discoverMovies(queryPara: queryPara)
         switch movies {
         case .success(let res):
@@ -146,7 +146,7 @@ class HomeViewModel:ObservableObject {
     }
     
     private func fetchMoviewBasedOnSelectedGenres() async -> MovieResponse? {
-        if selectedGenre == .topTrending {
+        if selectedGenre == Genre.topTrending.id {
             return await fetchTrendingMovies()
         } else {
             return await refreshMoviesOnGenreSelection()

@@ -1,31 +1,3 @@
-import UIKit
-
-var greeting = "Hello, playground"
-
-
-
-extension Dictionary where Key: ExpressibleByStringLiteral, Value: Any {
-
-    func queryString() -> String? {
-        var urlComponents = URLComponents(url: URL(string:"www.google.com")!, resolvingAgainstBaseURL: false)
-
-        
-        let queryItems = self.map{
-            return URLQueryItem(name: "\($0)", value: "\($1)")
-        }
-        
-        urlComponents?.queryItems = queryItems
-       return  urlComponents?.query
-
-    }
-}
-
-
-let values = ["include_video":false,"genre_id":5,"lang" : "eng"] as [String : Any]
-
-print(values.queryString())
-
-
 //
 //  MovieReviews.swift
 //  MoviesApp
@@ -79,7 +51,7 @@ struct AuthorDetails: Codable {
 
 extension MovieReviewResponse {
     
-     static let defaultData =
+    private static let defaultData =
     """
     
     {
@@ -94,7 +66,7 @@ extension MovieReviewResponse {
             "avatar_path": "/nidqITf735x9xxHfncXkT9BmOQ7.png",
             "rating": 7
           },
-          "content": "",
+          "content": "ly worth it.",
           "created_at": "2023-02-10T18:50:51.792Z",
           "id": "63e6920ba3d02700d333178f",
           "updated_at": "2023-02-10T18:50:51.927Z",
@@ -108,7 +80,7 @@ extension MovieReviewResponse {
             "avatar_path": "/1kks3YnVkpyQxzw36CObFPvhL5f.jpg",
             "rating": 7
           },
-          "content": "ersonality.",
+          "content": "rconnected themes of humanity and personality.",
           "created_at": "2023-05-15T09:29:03.003Z",
           "id": "6461fb5e8c44b90119cb5586",
           "updated_at": "2023-05-15T09:29:03.079Z",
@@ -121,16 +93,6 @@ extension MovieReviewResponse {
     
     """
     
-    
-    
-}
-
-
-do {
-    let previewMovie = try JSONDecoder().decode(MovieReviewResponse.self, from:MovieReviewResponse.defaultData.data(using: .utf8)!)
-
-}
-catch {
-    print(error)
+    static let previewMovie = try! JSONDecoder().decode(MovieReviewResponse.self, from:defaultData.data(using: .utf8)!)
 }
 
