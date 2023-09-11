@@ -15,7 +15,7 @@ struct MovieCastCrewResponse: Codable {
 }
 
 // MARK: - Cast
-struct Cast: Codable {
+struct Cast: Codable,Identifiable {
     let adult: Bool
     let gender, id: Int
     let knownForDepartment: String?
@@ -28,6 +28,7 @@ struct Cast: Codable {
     let order: Int?
     let department: String?
     let job: String?
+    
 
     enum CodingKeys: String, CodingKey {
         case adult, gender, id
@@ -40,6 +41,16 @@ struct Cast: Codable {
         case character
         case creditID = "credit_id"
         case order, department, job
+    }
+}
+
+extension Cast{
+    
+    var profileImage:String? {
+        if let profilePath {
+            return Constants.imageBaseURL200 + profilePath
+        }
+        return nil
     }
 }
 

@@ -27,7 +27,7 @@ struct HomeView: View {
             .preferredColorScheme(.dark)
             .padding([.top,.leading,.trailing])
             .background(Color.AppBackgroundColor.ignoresSafeArea())
-            .onAppear {
+            .task {
                 vm.fetchMoviesAndGenres()
             }
             .onChange(of: vm.selectedGenre) { newValue in

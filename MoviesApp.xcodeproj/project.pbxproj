@@ -51,6 +51,7 @@
 		10C8B4932AA73BAA00DD05F9 /* MoviePagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C8B4922AA73BA900DD05F9 /* MoviePagination.swift */; };
 		10C8B4952AA76BD500DD05F9 /* Searchbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C8B4942AA76BD500DD05F9 /* Searchbar.swift */; };
 		10C8B4972AA7756700DD05F9 /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C8B4962AA7756700DD05F9 /* ArrayExtension.swift */; };
+		10FB1E2A2AAF211D00569954 /* CastCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FB1E292AAF211D00569954 /* CastCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		10C8B4922AA73BA900DD05F9 /* MoviePagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviePagination.swift; sourceTree = "<group>"; };
 		10C8B4942AA76BD500DD05F9 /* Searchbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Searchbar.swift; sourceTree = "<group>"; };
 		10C8B4962AA7756700DD05F9 /* ArrayExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
+		10FB1E292AAF211D00569954 /* CastCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +164,7 @@
 			children = (
 				10004C792AA876BD0070F735 /* DetailsView.swift */,
 				10BF977B2AADA3E400D68716 /* MovieReviewAuthorCardView.swift */,
+				10FB1E292AAF211D00569954 /* CastCardView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -533,6 +536,7 @@
 				10469EBA2AA2031900139639 /* Image.swift in Sources */,
 				100D81912AA5DEC50032CFCA /* EndPoint.swift in Sources */,
 				10004C822AA8CF4A0070F735 /* MovieReviews.swift in Sources */,
+				10FB1E2A2AAF211D00569954 /* CastCardView.swift in Sources */,
 				100D81972AA5E3BB0032CFCA /* RequestError.swift in Sources */,
 				10469EE02AA21F3C00139639 /* MovieImageLoader.swift in Sources */,
 				100D81A02AA5F10E0032CFCA /* Common.swift in Sources */,

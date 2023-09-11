@@ -22,37 +22,21 @@ struct DetailsView: View {
                     
                     LazyVStack(alignment: .leading,pinnedViews: .sectionHeaders) {
                         Section {
-                              
                             switch vm.currentTab {
-                                
                             case 0:
                                 aboutMovieSection
                                     .tag(DetailSectionTab.aboutMovie.rawValue)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .padding()
-                                    .readSize(onChange: { size in
-                                        vm.tabSize[DetailSectionTab.aboutMovie.rawValue] = size
-                                        
-                                    })
-                                
                             case 1:
-
                                 reviewView
                                     .tag(DetailSectionTab.reviews.rawValue)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .readSize(onChange: { size in
-                                        vm.tabSize[DetailSectionTab.reviews.rawValue] = size
-                                    })
-                              
                             case 2:
-
                                 castView
                                     .tag(DetailSectionTab.cast.rawValue)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .padding()
-                                    .readSize(onChange: { size in
-                                        vm.tabSize[DetailSectionTab.cast.rawValue] = size
-                                    })
                             default:
                                 EmptyView()
                                 
@@ -60,16 +44,16 @@ struct DetailsView: View {
                           
                         } header: {
                             SectionSelectionView(selectedGenre: $vm.currentTab, genre: DetailSectionTab.displayAsGenre, nameSpace: namespace)
+                                .padding(.bottom,6)
                                 .background(Color.AppBackgroundColor)
+                                
+                            Divider()
                         }
-                       
-                        
                     }
                 }
                 .padding(.top,screenWidth * 0.2)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.AppBackgroundColor.ignoresSafeArea())
         .navigationBarBackButtonHidden()
         .navigationTitle(movie.title)
@@ -151,9 +135,10 @@ struct DetailsView: View {
     }
     
     @ViewBuilder var castView : some View {
-        VStack {
-            Text(vm.movieCastAndCrew?.cast.first?.name ?? "")
-                .font(.poppins(.Medium, size: 16))
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 20) {
+            ForEach(vm.movieCastAndCrew?.cast ?? []) { cast in
+                CastCardView(cast: cast)
+            }
         }
     }
 }
