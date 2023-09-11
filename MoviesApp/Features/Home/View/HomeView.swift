@@ -97,7 +97,7 @@ struct HomeView: View {
                             }
                     }
                 } header: {
-                    GenreView(selectedGenre: $vm.selectedGenre, genre: vm.genres, nameSpace: animation)
+                    SectionSelectionView(selectedGenre: $vm.selectedGenre, genre: vm.genres, nameSpace: animation)
                         .background(Color.AppBackgroundColor)
                         .padding(.bottom,15)
                     

@@ -38,11 +38,14 @@ class MovieDetailViewModel : ObservableObject {
     @Published var isLoading = false
     
     @Published var currentTab:Int = DetailSectionTab.aboutMovie.rawValue
-    
+    @Published var tabSize:[CGSize] = Array(repeating: CGSize.zero, count: DetailSectionTab.allCases.count)
+    @Published var tabHeight:CGFloat = 150
+
     init(movieService: MovieService) {
         self.movieService = movieService
     }
     
+    @MainActor
     func fetchMoveDetails(id:Int) {
         Task {
             isLoading = true
@@ -59,6 +62,7 @@ class MovieDetailViewModel : ObservableObject {
         }
     }
     
+    @MainActor
     func fetchMoveDetails(id:Int) async -> MovieDetail? {
         let res =  await movieService.fetchMovieDetails(movieID:id)
         switch res {
@@ -70,6 +74,7 @@ class MovieDetailViewModel : ObservableObject {
         }
     }
     
+    @MainActor
     func fetchMovieReviews(id:Int) async -> MovieReviewResponse? {
         let res =  await movieService.fetchReviews(movieID: id)
         switch res {
@@ -81,6 +86,7 @@ class MovieDetailViewModel : ObservableObject {
         }
     }
     
+    @MainActor
     func fetchMovieCastAndCrew(id:Int) async ->MovieCastCrewResponse? {
         let res =  await movieService.fetchMovieCast(movieID: id)
         switch res {

@@ -20,7 +20,7 @@ struct MovieReviewResponse: Codable {
 }
 
 // MARK: - MovieReview
-struct MovieReview: Codable {
+struct MovieReview: Codable,Identifiable {
     let author: String
     let authorDetails: AuthorDetails?
     let content, createdAt, id, updatedAt: String
@@ -39,9 +39,9 @@ struct MovieReview: Codable {
 
 // MARK: - AuthorDetails
 struct AuthorDetails: Codable {
-    let name, username:String
+    let name, username:String?
     let avatarPath: String?
-    let rating: Int
+    let rating: Int?
 
     enum CodingKeys: String, CodingKey {
         case name, username

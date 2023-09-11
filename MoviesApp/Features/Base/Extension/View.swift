@@ -17,3 +17,15 @@ extension View {
         UIScreen.main.bounds.height
     }
 }
+
+extension View  {
+    func readSize(onChange :@escaping(CGSize) -> Void) -> some View {
+        background {
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: proxy.size)
+            }
+            .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+        }
+    }
+}

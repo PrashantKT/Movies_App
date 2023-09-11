@@ -14,42 +14,60 @@ struct DetailsView: View {
     @Namespace var namespace
     @Environment(\.dismiss) var dismiss
     var body: some View {
-        VStack {
-            MovieDetailsHeaderView(movie: $movie)
-            
+        ScrollView {
             VStack {
-                tagView
-                
-                GenreView(selectedGenre: $vm.currentTab, genre: DetailSectionTab.displayAsGenre, nameSpace: namespace)
-                    .padding()
+                MovieDetailsHeaderView(movie: $movie)
+                VStack {
+                    tagView
                     
-                TabView(selection: $vm.currentTab) {
-                    
-                    aboutMovieSection
-                        .tag(DetailSectionTab.aboutMovie.rawValue)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                    
-                    reviewView
-                        .tag(DetailSectionTab.reviews.rawValue)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                    
-                    castView
-                        .tag(DetailSectionTab.cast.rawValue)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                    
+                    LazyVStack(alignment: .leading,pinnedViews: .sectionHeaders) {
+                        Section {
+                              
+                            switch vm.currentTab {
+                                
+                            case 0:
+                                aboutMovieSection
+                                    .tag(DetailSectionTab.aboutMovie.rawValue)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .padding()
+                                    .readSize(onChange: { size in
+                                        vm.tabSize[DetailSectionTab.aboutMovie.rawValue] = size
+                                        
+                                    })
+                                
+                            case 1:
 
-                
+                                reviewView
+                                    .tag(DetailSectionTab.reviews.rawValue)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .readSize(onChange: { size in
+                                        vm.tabSize[DetailSectionTab.reviews.rawValue] = size
+                                    })
+                              
+                            case 2:
+
+                                castView
+                                    .tag(DetailSectionTab.cast.rawValue)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .padding()
+                                    .readSize(onChange: { size in
+                                        vm.tabSize[DetailSectionTab.cast.rawValue] = size
+                                    })
+                            default:
+                                EmptyView()
+                                
+                            }
+                          
+                        } header: {
+                            SectionSelectionView(selectedGenre: $vm.currentTab, genre: DetailSectionTab.displayAsGenre, nameSpace: namespace)
+                                .background(Color.AppBackgroundColor)
+                        }
+                       
+                        
+                    }
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-
-        
+                .padding(.top,screenWidth * 0.2)
             }
-            
-            .padding(.top,screenWidth * 0.2)
-
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.AppBackgroundColor.ignoresSafeArea())
@@ -114,9 +132,21 @@ struct DetailsView: View {
     }
     
     @ViewBuilder var reviewView : some View {
-        VStack {
-            Text(vm.movieRevies?.results.first?.content ?? "")
-                .font(.poppins(.Medium, size: 16))
+        if let movieReview = vm.movieRevies?.results {
+            ForEach(movieReview) { review in
+                MovieReviewAuthorCardView(movieReview: review)
+                    .padding(.horizontal,4)
+                    .padding(.vertical,6)
+
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 15))
+                    .listRowSeparator(.hidden)
+            }
+            .padding([.horizontal,.bottom])
+        } else {
+            Text("No Reviews for this Movie")
+                .font(.poppins(.Medium, size: 14))
+                .padding(.top,50)
         }
     }
     
@@ -137,6 +167,23 @@ struct MovieDetailsHeaderView : View {
                 MovieImageLoader(movie: movie, cardType: .poster,imageType:.backdrop)
                     .clipped()
                     .frame(width: size.width,height:size.height)
+                    .overlay {
+                        HStack {
+                            Image(systemName: "star")
+                            Text(String(format: "%0.1f", (movie.voteAverage ?? 0)))
+                        }
+                        .font(.poppins(.Bold, size: 14))
+                        .kerning(0.12)
+                        .foregroundColor(Color.orange)
+                        .padding(.horizontal,8)
+                        .padding(.vertical,2)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Capsule())
+                        .frame(maxWidth: .infinity, maxHeight: .infinity,alignment: .bottomTrailing)
+                        .padding([.trailing,.bottom],6)
+
+                    }
+                
                 
             }
             .frame(height:screenHeight * 0.35)
@@ -148,12 +195,13 @@ struct MovieDetailsHeaderView : View {
                     .shadow(color: Color.white.opacity(0.2), radius: 5,x: -5,y:-5)
                 
                 Text(movie.title)
-                    .font(.poppins(.SemiBold, size: 25))
-                    .offset(y:20)
+                    .font(.poppins(.SemiBold, size: 18))
+                    .offset(y:30)
 
             }
             .padding()
             .offset(y:screenWidth * 0.2)
+            
         }
     }
 }

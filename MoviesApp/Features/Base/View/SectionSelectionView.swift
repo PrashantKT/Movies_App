@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GenreView: View {
+struct SectionSelectionView: View {
     @Binding var selectedGenre:Int
     var genre:[Genre]
     var nameSpace:Namespace.ID
@@ -44,6 +44,6 @@ struct GenreView: View {
 struct GenreView_Previews: PreviewProvider {
     @Namespace static var nameSpace
     static var previews: some View {
-        GenreView(selectedGenre: .constant(2), genre: [.init(id: 1, name: "54352dfgdsg"),.init(id: 2, name: "testgsgsergs2"),.init(id: 3, name: "54352dfgdsg"),.init(id: 4, name: "testgsgsergs2"),.init(id: 5, name: "54352dfgdsg"),.init(id: 6, name: "testgsgsergs2")], nameSpace:nameSpace )
+        SectionSelectionView(selectedGenre: .constant(2), genre: [.init(id: 1, name: "54352dfgdsg"),.init(id: 2, name: "testgsgsergs2"),.init(id: 3, name: "54352dfgdsg"),.init(id: 4, name: "testgsgsergs2"),.init(id: 5, name: "54352dfgdsg"),.init(id: 6, name: "testgsgsergs2")], nameSpace:nameSpace )
     }
 }

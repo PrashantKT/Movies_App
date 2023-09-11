@@ -10,14 +10,15 @@ import Foundation
 // MARK: - Welcome
 struct MovieCastCrewResponse: Codable {
     let id: Int
-    let cast, crew: [Cast]
+    let cast :[Cast]
+    let  crew: [Cast]
 }
 
 // MARK: - Cast
 struct Cast: Codable {
     let adult: Bool
     let gender, id: Int
-    let knownForDepartment: Department
+    let knownForDepartment: String?
     let name, originalName: String
     let popularity: Double
     let profilePath: String?
@@ -25,7 +26,7 @@ struct Cast: Codable {
     let character: String?
     let creditID: String
     let order: Int?
-    let department: Department?
+    let department: String?
     let job: String?
 
     enum CodingKeys: String, CodingKey {
@@ -42,19 +43,19 @@ struct Cast: Codable {
     }
 }
 
-enum Department: String, Codable {
-    case acting = "Acting"
-    case art = "Art"
-    case camera = "Camera"
-    case costumeMakeUp = "Costume & Make-Up"
-    case crew = "Crew"
-    case directing = "Directing"
-    case editing = "Editing"
-    case lighting = "Lighting"
-    case production = "Production"
-    case sound = "Sound"
-    case writing = "Writing"
-}
+//enum Department: String, Codable {
+//    case acting = "Acting"
+//    case art = "Art"
+//    case camera = "Camera"
+//    case costumeMakeUp = "Costume & Make-Up"
+//    case crew = "Crew"
+//    case directing = "Directing"
+//    case editing = "Editing"
+//    case lighting = "Lighting"
+//    case production = "Production"
+//    case sound = "Sound"
+//    case writing = "Writing"
+//}
 
 
 extension MovieCastCrewResponse {
