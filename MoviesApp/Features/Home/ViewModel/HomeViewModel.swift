@@ -22,7 +22,7 @@ class HomeViewModel:ObservableObject {
     @Published var selectedGenre:Int = Genre.topTrending.id
 
     @Published var errormsg = ""
-    @MainActor @Published var isLoading = false
+    @MainActor @Published var isLoading = true
     
     @Published var selectedMovie:Movie?
     @Published var isMovieSelected = false

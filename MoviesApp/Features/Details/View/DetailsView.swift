@@ -19,49 +19,42 @@ struct DetailsView: View {
                 MovieDetailsHeaderView(movie: $movie)
                 VStack {
                     tagView
+                    SectionSelectionView(selectedGenre: $vm.currentTab, genre: DetailSectionTab.displayAsGenre, nameSpace: namespace)
+                        .padding(.bottom,6)
+                        .background(Color.AppBackgroundColor)
+                        
+                    Divider()
                     
-                    LazyVStack(alignment: .leading,pinnedViews: .sectionHeaders) {
-                        Section {
-                            switch vm.currentTab {
-                            case 0:
-                                aboutMovieSection
-                                    .tag(DetailSectionTab.aboutMovie.rawValue)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .padding()
-                            case 1:
-                                reviewView
-                                    .tag(DetailSectionTab.reviews.rawValue)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            case 2:
-                                castView
-                                    .tag(DetailSectionTab.cast.rawValue)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .padding()
-                            default:
-                                EmptyView()
-                                
-                            }
-                          
-                        } header: {
-                            SectionSelectionView(selectedGenre: $vm.currentTab, genre: DetailSectionTab.displayAsGenre, nameSpace: namespace)
-                                .padding(.bottom,6)
-                                .background(Color.AppBackgroundColor)
-                                
-                            Divider()
-                        }
+                    switch vm.currentTab {
+                    case 0:
+                        aboutMovieSection
+                            .tag(DetailSectionTab.aboutMovie.rawValue)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                    case 1:
+                        reviewView
+                            .tag(DetailSectionTab.reviews.rawValue)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    case 2:
+                        castView
+                            .tag(DetailSectionTab.cast.rawValue)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                    default:
+                        EmptyView()
+                        
                     }
+                    
                 }
                 .padding(.top,screenWidth * 0.2)
             }
         }
         .background(Color.AppBackgroundColor.ignoresSafeArea())
         .navigationBarBackButtonHidden()
-        .navigationTitle(movie.title)
+        .navigationTitle("Details")
         .preferredColorScheme(.dark)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(movie.title)
-            }
+            
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     dismiss()
@@ -71,20 +64,22 @@ struct DetailsView: View {
                         .tint(Color.white)
                 }
             }
-        }
-        .onAppear {
-            vm.fetchMoveDetails(id: movie.id)
-        }
-        .overlay{
-            if vm.isLoading {
-                ZStack {
-                    Color.black.opacity(0.7)
-                        .ignoresSafeArea()
-                    ProgressView()
-                        .frame(width: 55,height: 55)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    
+                } label: {
+                    Image("BookmarkIcon")
+                        .renderingMode(.template)
+                        .tint(Color.white)
                 }
+
             }
         }
+        .task {
+            vm.fetchMoveDetails(id: movie.id)
+        }
+        .modifier(LoaderView(isLoading: $vm.isLoading))
+
         
     }
     

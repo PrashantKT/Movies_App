@@ -33,24 +33,11 @@ struct HomeView: View {
             .onChange(of: vm.selectedGenre) { newValue in
                 vm.genreChanged()
             }
-            .overlay{
-                if vm.isLoading {
-                    ZStack {
-                        Color.black.opacity(0.7)
-                            .ignoresSafeArea()
-                        ProgressView()
-                            .frame(width: 55,height: 55)
-                    }
-                }
-            }
+            .modifier(LoaderView(isLoading: $vm.isLoading))
             .navigationDestination(isPresented: $vm.isMovieSelected) {
-        
                 if let binding = Binding<Movie>($vm.selectedMovie) {
-                  
                     DetailsView(movie: binding)
-                        
                 }
-
             }
         }
     }
