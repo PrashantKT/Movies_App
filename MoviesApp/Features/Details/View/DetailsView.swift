@@ -111,7 +111,7 @@ struct DetailsView: View {
     }
     
     @ViewBuilder var reviewView : some View {
-        if let movieReview = vm.movieRevies?.results {
+        if let movieReview = vm.movieRevies?.results,!movieReview.isEmpty {
             ForEach(movieReview) { review in
                 MovieReviewAuthorCardView(movieReview: review)
                     .padding(.horizontal,4)

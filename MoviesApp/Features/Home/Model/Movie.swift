@@ -29,7 +29,7 @@ struct Movie: Codable,Identifiable,Equatable {
     let id: Int
     let originalLanguage, originalTitle, overview: String?
     let popularity: Double?
-    let posterPath:String
+    let posterPath:String?
     var releaseDate, title: String
     let video: Bool?
     let voteAverage: Double?
@@ -55,17 +55,25 @@ extension Movie:Hashable {}
 
 extension Movie {
     var imagePosterSize:String {
-        return Constants.imageBaseURL500 + posterPath
+        if let posterPath {
+            return Constants.imageBaseURL500 + posterPath
+        } else {
+            return ""
+        }
     }
     
     var imageSmallGridSize:String {
-        return Constants.imageBaseURL200 + posterPath
+        if let posterPath {
+            return Constants.imageBaseURL200 + posterPath
+        } else {
+            return ""
+        }
     }
     
     func fetchBaseURL(cardType:MovieCardType,imageType:MovieImageType) -> String {
         switch imageType {
         case .backdrop:
-            return Constants.imageBaseURL + (backdropPath ?? posterPath)
+            return Constants.imageBaseURL + (backdropPath ?? posterPath ?? "")
         case .poster:
             switch cardType {
             case .poster:

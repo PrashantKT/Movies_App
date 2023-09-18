@@ -54,10 +54,9 @@ class HomeViewModel:ObservableObject {
     @Published var isMovieSelected = false
     
     @Published var topRatedMovie:ApiRequestStatus<MovieResponse?> = .loading
-    @Published var topTrendingMovies:ApiRequestStatus<MovieResponse?> = .failed(error: .invalidURL)
+    @Published var topTrendingMovies:ApiRequestStatus<MovieResponse?> = .loading
 
     private (set) var topTrendingMoviePagination = MoviePagination()
-    @Published var animation:CGFloat = 0
     
     
     func trendingMoviesScroll(at movie:Movie) {
@@ -91,7 +90,7 @@ class HomeViewModel:ObservableObject {
                 if var finalMovieRes = self.topTrendingMovies.fetchedData {
                     finalMovieRes?.results = currentData
                     self.topTrendingMovies = .fetched(data: finalMovieRes)
-                } else {
+                } else if let movies  = movies{
                     self.topTrendingMovies = .fetched(data: movies)
                 }
                 
@@ -182,10 +181,12 @@ class HomeViewModel:ObservableObject {
     
     
     func fetchMoviesAndGenres() {
+        guard self.topTrendingMovies == .loading,  self.topRatedMovie == .loading else {
+            return
+        }
         Task {
             isLoading = true
             async let topRatedMovies = await fetchTopRatedMovies()
-//            async let topTrendingMovies = await fetchTrendingMovies()
             async let genres = await fetchGenres()
             
             if let _topRatedMovie =  await topRatedMovies {

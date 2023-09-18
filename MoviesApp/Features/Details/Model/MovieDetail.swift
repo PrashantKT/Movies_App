@@ -10,15 +10,15 @@ import Foundation
 
 struct MovieDetail: Codable {
     let adult: Bool
-    let backdropPath: String
+    let backdropPath: String?
     let belongsToCollection: BelongsToCollection?
     let budget: Int
     let genres: [Genre]
     let homepage: String
     let id: Int
-    let imdbID, originalLanguage, originalTitle, overview: String
+    let imdbID, originalLanguage, originalTitle, overview: String?
     let popularity: Double
-    let posterPath: String
+    let posterPath: String?
     let productionCompanies: [ProductionCompany]
     let productionCountries: [ProductionCountry]
     let releaseDate: String
@@ -53,7 +53,8 @@ struct MovieDetail: Codable {
 // MARK: - BelongsToCollection
 struct BelongsToCollection: Codable {
     let id: Int
-    let name, posterPath, backdropPath: String
+    let name, posterPath:String?
+    let backdropPath: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name
