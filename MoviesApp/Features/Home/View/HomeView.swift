@@ -33,7 +33,7 @@ struct HomeView: View {
             .onChange(of: vm.selectedGenre) { newValue in
                 vm.genreChanged()
             }
-            .modifier(LoaderView(isLoading: $vm.isLoading))
+//            .modifier(LoaderView(isLoading: $vm.isLoading))
             .navigationDestination(isPresented: $vm.isMovieSelected) {
                 if let binding = Binding<Movie>($vm.selectedMovie) {
                     DetailsView(movie: binding)
@@ -44,58 +44,85 @@ struct HomeView: View {
     
     @ViewBuilder
     var topHorizontalScrollView : some View {
-        if let movies = vm.topRatedMovies?.results {
-            ScrollView(.horizontal,showsIndicators: false) {
-                HStack(spacing:30) {
-                    ForEach(movies) {movie in
-                        MovieCardView(movie: movie, cardType: .poster)
-                            .onTapGesture {
-//                                vm.selectedMovie = movie
-//                                vm.isMovieSelected.toggle()
-                                
-                                var transaction = Transaction()
-                                transaction.disablesAnimations = true
-                                withTransaction(transaction) {
+        switch vm.topRatedMovie {
+        case .loading:
+            SectionBasedLoaderView(height: screenWidth * MovieCardType.poster.heightPercentage)
+            
+        case .fetched(let res):
+            if let movies = res?.results {
+                ScrollView(.horizontal,showsIndicators: false) {
+                    HStack(spacing:30) {
+                        ForEach(movies) {movie in
+                            MovieCardView(movie: movie, cardType: .poster)
+                                .onTapGesture {
                                     vm.selectedMovie = movie
                                     vm.isMovieSelected.toggle()
                                 }
-                            }
-                        
+                        }
                     }
                 }
             }
+        case .failed(_):
+            ErrorView(height: screenWidth * MovieCardType.poster.heightPercentage)
+
         }
+
     }
     
     @ViewBuilder
     var trendingItemsView : some View {
-        if let topTrending = vm.topTrendingMovies?.results {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(),spacing: 20), count: 3),pinnedViews: .sectionHeaders) {
-                Section {
-                    ForEach(topTrending) {movie in
-                        MovieCardView(movie: movie, cardType: .grid)
-                            .id(movie.id)
-                            .onAppear {
-                                 vm.trendingMoviesScroll(at: movie)
-                            } .onTapGesture {
-                                vm.selectedMovie = movie
-                                vm.isMovieSelected.toggle()
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(),spacing: 20), count: vm.gridItemsCount),pinnedViews: .sectionHeaders) {
+            Section {
+                switch vm.topTrendingMovies {
+                case .loading:
+                    ForEach(0..<15,id: \.self) {i in
+                        SectionBasedLoaderView(width: screenWidth  * MovieCardType.grid.heightPercentage,height:screenWidth  * MovieCardType.grid.heightPercentage )
 
-                            }
                     }
-                } header: {
-                    SectionSelectionView(selectedGenre: $vm.selectedGenre, genre: vm.genres, nameSpace: animation)
-                        .background(Color.AppBackgroundColor)
-                        .padding(.bottom,15)
-                    
-                } footer: {
-                    VStack {
-                        ProgressView()
-                            .padding(.top,20)
-                            .opacity(vm.topTrendingMoviePagination.isMoreRecordAvailable ? 1 : 0)
+                case .fetched(let res):
+                    if let topTrending = res?.results {
+                        trendingItemsListView(topTrending: topTrending)
                     }
+                case .failed:
+                    ErrorView(height: 200)
+                        .tag(2)
+                }
+                
+            } header: {
+                SectionSelectionView(selectedGenre: $vm.selectedGenre, genre: vm.genres, nameSpace: animation)
+                    .background(Color.AppBackgroundColor)
+                    .padding(.bottom,15)
+                
+            } footer: {
+                if !vm.isErrorInTopTrendingFetch {
+                    footerProgressView
                 }
             }
+        }
+        
+        
+    }
+    
+    @ViewBuilder
+    func trendingItemsListView(topTrending:[Movie]) -> some View {
+        ForEach(topTrending) {movie in
+            MovieCardView(movie: movie, cardType: .grid)
+                .id(movie.id)
+                .onAppear {
+                     vm.trendingMoviesScroll(at: movie)
+                } .onTapGesture {
+                    vm.selectedMovie = movie
+                    vm.isMovieSelected.toggle()
+
+                }
+        }
+    }
+    
+    var footerProgressView: some View {
+        VStack {
+            ProgressView()
+                .padding(.top,20)
+                .opacity(vm.topTrendingMoviePagination.isMoreRecordAvailable ? 1 : 0)
         }
     }
 }
