@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct CastCardView: View {
-    var cast:Cast
+    var cast:Cast?
+    var isLoading:Bool = false
     var body: some View {
 
         VStack {
-            AsyncImage(url: URL(string: cast.profileImage ?? "")) { image in
+            AsyncImage(url: URL(string: cast?.profileImage ?? "")) { image in
                 image
                     .resizable()
                     .scaledToFill()
@@ -25,12 +26,13 @@ struct CastCardView: View {
             .frame(height:(screenWidth - 40) * 0.4)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .padding([.horizontal,.top])
-            Text(cast.name)
+            Text(cast?.name ?? "")
                 .lineLimit(1)
                 .font(.poppins(.Bold, size: 14))
                 .foregroundColor(.white)
                 .padding(.horizontal,2)
-            Text(cast.character ?? "-")
+            
+            Text(cast?.character ?? "-")
                 .lineLimit(2)
                 .font(.poppins(.Light, size: 9))
                 .padding(.bottom)
@@ -47,11 +49,12 @@ struct CastCardView: View {
                 .shadow(color: Color.white.opacity(0.2),radius: 5,x: 5,y: 5)
                 .overlay {
                     RoundedRectangle(cornerRadius: 8).stroke(Color.white.opacity(0.35))
-                }
+                }.opacity(isLoading ? 0 : 1)
         }
         
         .frame(width:(screenWidth - 40) * 0.4)
-       
+        .shimmerView(isLoading: .constant(isLoading))
+
 
 //        .clipShape(RoundedRectangle(cornerRadius: 8))
 

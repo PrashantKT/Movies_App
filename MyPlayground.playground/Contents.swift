@@ -134,3 +134,6 @@ catch {
     print(error)
 }
 
+
+let t = Array(repeating: UUID().uuidString, count: 5).joined(separator: "\n")
+print(t)

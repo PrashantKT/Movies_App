@@ -9,17 +9,21 @@ import SwiftUI
 
 struct MovieReviewAuthorCardView: View {
     @State private var lineLimit:Int? = 2
-    var movieReview:MovieReview
+    @Binding  var isLoadingView:Bool
+    var movieReview:MovieReview?
     var body: some View {
 
         VStack(alignment: .leading) {
             HStack(alignment:.top) {
                 avtarView
+                    .shimmerView(isLoading: $isLoadingView)
                 VStack(alignment:.leading,spacing:4) {
-                    Text("A Review By \(movieReview.author)")
+                    Text("A Review By \(movieReview?.author ?? "")")
                         .font(.poppins(.Bold, size: 14))
+                        .shimmerView(isLoading: $isLoadingView)
+
                     HStack(spacing:5) {
-                        if let rating = movieReview.authorDetails?.rating {
+                        if let rating = movieReview?.authorDetails?.rating {
                             HStack(spacing:2) {
                                 Image(systemName: "star.fill")
                                 Text("\(rating)")
@@ -30,16 +34,20 @@ struct MovieReviewAuthorCardView: View {
                             .foregroundColor(.white)
                             .background(Color.black)
                             .clipShape(Capsule())
+                            .shimmerView(isLoading: $isLoadingView)
+
                         }
-                      
-                        Text("Written By \(movieReview.author)")
+                        
+                        Text("Written By \(movieReview?.author ?? "")")
                             .font(.poppins(.Light, size: 12))
                             .lineLimit(2)
+                            .shimmerView(isLoading: $isLoadingView)
+
                     }
-                    
+
                     
                     VStack(alignment:.leading,spacing:2) {
-                        Text(movieReview.content)
+                        Text(movieReview?.content ?? "")
                             .lineLimit(lineLimit)
                             .font(.poppins(.Light, size: 12))
                         
@@ -49,22 +57,25 @@ struct MovieReviewAuthorCardView: View {
                         .font(.poppins(.Light, size: 12))
                         .offset(y:20)
                         .frame(maxWidth: .infinity,alignment: .trailing)
+                        .opacity(isLoadingView ? 0 : 1)
                         
                     }
-                    
+                    .shimmerView(isLoading: $isLoadingView)
+
 
                 }
             }
         }
+        
     }
     
     var avtarView: some View {
-        AsyncImage(url: URL(string: Constants.imageBaseURL200 +  (movieReview.authorDetails?.avatarPath ?? ""))) { image in
+        AsyncImage(url: URL(string: Constants.imageBaseURL200 +  (movieReview?.authorDetails?.avatarPath ?? ""))) { image in
             image
                 .resizable()
                 .aspectRatio(contentMode: .fill)
         } placeholder: {
-            Text(movieReview.author.prefix(1))
+            Text(movieReview?.author.prefix(1) ?? "-")
                 .font(.poppins(.Black, size: 16))
                 .foregroundColor(.black)
         }
@@ -77,7 +88,8 @@ struct MovieReviewAuthorCardView: View {
 
 struct MovieReviewAuthorCardView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieReviewAuthorCardView(movieReview: MovieReviewResponse.previewMovie.results.first!)
+        MovieReviewAuthorCardView(isLoadingView: .constant(true), movieReview: MovieReviewResponse.previewMovie.results.first!)
             .previewLayout(.sizeThatFits)
     }
 }
+

@@ -28,15 +28,18 @@ struct DetailsView: View {
                     switch vm.currentTab {
                     case 0:
                         aboutMovieSection
+                            .transition(.asymmetric(insertion: .push(from: .bottom), removal: .opacity))
                             .tag(DetailSectionTab.aboutMovie.rawValue)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .padding()
+
                     case 1:
                         reviewView
+                            .transition(.asymmetric(insertion: .push(from: .bottom), removal: .opacity))
                             .tag(DetailSectionTab.reviews.rawValue)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     case 2:
                         castView
+                            .transition(.asymmetric(insertion: .push(from: .bottom), removal: .opacity))
                             .tag(DetailSectionTab.cast.rawValue)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .padding()
@@ -78,63 +81,113 @@ struct DetailsView: View {
         .task {
             vm.fetchMoveDetails(id: movie.id)
         }
-        .modifier(LoaderView(isLoading: $vm.isLoading))
-
         
     }
     
+    @ViewBuilder
     var tagView: some View {
-        ScrollView(.horizontal,showsIndicators: false) {
-            
-            HStack {
-                Label(vm.movieDetailsResponse?.releaseDate ?? "-", image: "CalendarIcon")
-                Divider()
-                    .frame(height: 20)
-                Label("\(vm.movieDetailsResponse?.runtime ?? 0) Minutes", image: "ClockIcon")
-                Divider()
-                    .frame(height: 20)
-                Label(vm.fetchGenres(), image: "GenreIcon")
-                    .lineLimit(1)
+        switch vm.movieDetailsResponse {
+        case .loading:
+            SectionBasedLoaderView(height: 20)
+                .padding(.horizontal,20)
+        case .fetched(let data):
+            ScrollView(.horizontal,showsIndicators: false) {
+                
+                HStack {
+                    Label(data.releaseDate, image: "CalendarIcon")
+                    Divider()
+                        .frame(height: 20)
+                    Label("\(data.runtime) Minutes", image: "ClockIcon")
+                    Divider()
+                        .frame(height: 20)
+                    Label(vm.fetchGenres(), image: "GenreIcon")
+                        .lineLimit(1)
+                }
             }
+            .padding(.horizontal,20)
+            
+            .font(.poppins(.Regular, size: 12))
+            .foregroundColor(Color.AppGrayColor2)
+        case .failed:
+            EmptyView()
         }
-        .padding(.horizontal,20)
-        
-        .font(.poppins(.Regular, size: 12))
-        .foregroundColor(Color.AppGrayColor2)
+       
     }
     
     @ViewBuilder var aboutMovieSection : some View {
-        VStack {
-            Text(vm.movieDetailsResponse?.overview ?? "")
-                .font(.poppins(.Medium, size: 16))
+        VStack(alignment:.leading) {
+            switch  vm.movieDetailsResponse {
+            case .loading:
+                ForEach(0..<5,id: \.self) { index in
+                    Text("")
+                        .padding(.horizontal)
+                        .shimmerView(isLoading: .constant(true),width: 320 - CGFloat(Int.random(in: 10...15)  * index), height: 10)
+                }
+                    
+            case .fetched(let data):
+                Text(data.overview ?? "")
+                    .font(.poppins(.Medium, size: 16))
+
+            case .failed:
+                ErrorView(height:140)
+                
+            }
+            
+            
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity,alignment: .leading)
     }
     
     @ViewBuilder var reviewView : some View {
-        if let movieReview = vm.movieRevies?.results,!movieReview.isEmpty {
-            ForEach(movieReview) { review in
-                MovieReviewAuthorCardView(movieReview: review)
+        switch vm.movieRevies {
+        case .loading:
+            ForEach(0..<15,id: \.self) { index in
+                MovieReviewAuthorCardView(isLoadingView: .constant(true), movieReview: nil)
                     .padding(.horizontal,4)
                     .padding(.vertical,6)
 
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 15))
-                    .listRowSeparator(.hidden)
             }
-            .padding([.horizontal,.bottom])
-        } else {
-            Text("No Reviews for this Movie")
-                .font(.poppins(.Medium, size: 14))
-                .padding(.top,50)
+        case .fetched(let movieReview):
+            if !movieReview.results.isEmpty {
+                ForEach(movieReview.results) { review in
+                    MovieReviewAuthorCardView(isLoadingView:.constant(false),movieReview: review)
+                        .padding(.horizontal,4)
+                        .padding(.vertical,6)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 15))
+                        .listRowSeparator(.hidden)
+                }
+                .padding([.horizontal,.bottom])
+            } else {
+                Text("No Reviews for this Movie")
+                    .font(.poppins(.Medium, size: 14))
+                    .padding(.top,50)
+            }
+        case .failed:
+            ErrorView(height:140).padding()
         }
     }
     
     @ViewBuilder var castView : some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 20) {
-            ForEach(vm.movieCastAndCrew?.cast ?? []) { cast in
-                CastCardView(cast: cast)
+        switch vm.movieCastAndCrew {
+        case .loading:
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 20) {
+                ForEach(0..<20,id: \.self) { cast in
+                    CastCardView(cast: nil,isLoading: true)
+                }
             }
+
+        case .fetched(let data):
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 20) {
+                ForEach(data.cast) { cast in
+                    CastCardView(cast: cast)
+                }
+            }
+        case .failed:
+            ErrorView(height:140)
         }
+        
+      
     }
 }
 
@@ -193,7 +246,7 @@ struct DetailsView_Previews: PreviewProvider {
         NavigationStack {
             DetailsView(movie: .constant(Movie.previewMovie))
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(Movie.previewMovie.title)
+//                .navigationTitle(Movie.previewMovie.title)
         }
     }
 }

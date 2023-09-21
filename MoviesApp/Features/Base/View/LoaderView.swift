@@ -29,27 +29,74 @@ struct SectionBasedLoaderView : View {
     var width:CGFloat? = nil
     var height:CGFloat? = nil
     @State private var animate = false
+    var cornerRadius:CGFloat = 12
     var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(Color(uiColor: UIColor.systemGray2))
-            .frame(width: width,height: height)
-            .opacity(animate ? 1 : 0.7)
-            .transition(.opacity)
-            .overlay {
-//                ProgressView()
-//                    .frame(width: 55,height: 55)
-//                    .tint(Color.white)
+        ZStack{
+            Color.black.cornerRadius(cornerRadius)
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(Color(uiColor: UIColor.systemGray2))
+                .opacity(animate ? 1 : 0.7)
+
+        }
+        .frame(width: width,height: height)
+        .transition(.opacity)
+        .onAppear {
+            withAnimation(.linear(duration: 0.4).repeatForever()) {
+                animate = true
             }
-            .onAppear {
-                withAnimation(.linear(duration: 0.3).repeatForever()) {
-                    animate = true
-                }
-            }
+        }
     }
 }
 
 struct SectionBasedLoaderView_Preview:PreviewProvider {
     static var previews: some View {
-        SectionBasedLoaderView(width: 300,height: 300)
+        VStack(alignment:.leading,spacing: 5) {
+            HStack {
+                Circle()
+                    .frame(width: 45)
+                    .padding(12)
+
+                    .shimmerView(isLoading: .constant(true))
+                VStack(alignment:.leading,spacing: 10) {
+                    Text("Hello How are you")
+                        .shimmerView(isLoading: .constant(true))
+                    Text("test")
+                        .shimmerView(isLoading: .constant(true),width: 80)
+                }
+                
+            }
+        }
+        .padding()
+
+//        SectionBasedLoaderView(width: 300,height: 300)
     }
 }
+
+struct ShimmerView: ViewModifier {
+    @Binding var isLoadig:Bool
+    var width:CGFloat?
+    var height:CGFloat?
+    func body(content: Content) -> some View {
+        content.overlay {
+            if isLoadig {
+                GeometryReader { proxy in
+                    let cornerRadius = min(proxy.size.width,proxy.size.height)
+                    SectionBasedLoaderView(width: width,height: height,cornerRadius:proxy.size.width == proxy.size.height ?  cornerRadius / 2 : 12)
+                }
+            }
+        }
+    }
+    
+}
+
+extension View {
+    
+    func shimmerView(isLoading:Binding<Bool>,width:CGFloat? = nil , height:CGFloat? = nil) -> some View {
+        
+        self.frame(width:width, height:height).padding(2).modifier(ShimmerView(isLoadig: isLoading,width: width))
+        
+        
+    }
+    
+}
+
