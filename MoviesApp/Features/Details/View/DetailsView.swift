@@ -11,6 +11,7 @@ struct DetailsView: View {
     
     @Binding var movie:Movie
     @StateObject  var vm = MovieDetailViewModel(movieService: MovieService())
+    @EnvironmentObject var mainVM:MainViewModel
     @Namespace var namespace
     @Environment(\.dismiss) var dismiss
     var body: some View {
@@ -69,11 +70,12 @@ struct DetailsView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    
+                    mainVM.addRemoveFav(movie:movie)
                 } label: {
+                    
                     Image("BookmarkIcon")
                         .renderingMode(.template)
-                        .tint(Color.white)
+                        .tint(mainVM.favRepo.isFavExits(movie: movie) ?  Color.pink : Color.white)
                 }
 
             }
@@ -245,6 +247,7 @@ struct DetailsView_Previews: PreviewProvider {
         
         NavigationStack {
             DetailsView(movie: .constant(Movie.previewMovie))
+                .environmentObject(MainViewModel())
                 .navigationBarTitleDisplayMode(.inline)
 //                .navigationTitle(Movie.previewMovie.title)
         }

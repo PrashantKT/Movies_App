@@ -14,12 +14,8 @@ protocol HttpClient {
 extension HttpClient {
     func sendRequest<T:Codable>(endPoint:EndPoint,responseModel:T.Type) async -> Result<T,RequestError> {
         
-        var urlComponents = URLComponents()
-        urlComponents.path = endPoint.path
-        urlComponents.host = endPoint.host
-        urlComponents.scheme = endPoint.scheme
-        urlComponents.query = endPoint.queryItem?.queryString()
-        guard let url = urlComponents.url else {
+      
+        guard let url = endPoint.createURL() else {
             return .failure(.invalidURL)
         }
         var request = URLRequest(url: url)

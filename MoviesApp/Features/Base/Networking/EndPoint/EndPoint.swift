@@ -24,5 +24,15 @@ extension EndPoint {
     var host: String {
         return "api.themoviedb.org"
     }
+    
+    func createURL() -> URL? {
+        var urlComponents = URLComponents()
+        urlComponents.path = path
+        urlComponents.host = host
+        urlComponents.scheme = scheme
+        urlComponents.query = queryItem?.queryString()
+        return urlComponents.url
+      
+    }
 }
 

@@ -99,8 +99,6 @@ struct HomeView: View {
                 }
             }
         }
-        
-        
     }
     
     @ViewBuilder

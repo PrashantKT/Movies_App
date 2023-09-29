@@ -41,8 +41,6 @@ class HomeViewModel:ObservableObject {
         self.movieService = service
     }
     @Published var searchText = ""
-//    @Published var topRatedMovies:MovieResponse?
-//    @Published var topTrendingMovies:MovieResponse?
 
     @Published var genres = [Genre]()
     @Published var selectedGenre:Int = Genre.topTrending.id
@@ -129,7 +127,7 @@ class HomeViewModel:ObservableObject {
     
     func refreshMoviesOnGenreSelection() async -> MovieResponse? {
 
-        //Only Load if we are loading first page
+        //Only Load  status if we are loading first page
         if topTrendingMoviePagination.currentPage == 1{
             self.topTrendingMovies = .loading
         }
